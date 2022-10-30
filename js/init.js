@@ -30,6 +30,26 @@
     });
   });
 
+  $('#btn-service-one').click(function () {
+    swal('Digite el número único de la factura a pagar:', {
+      closeOnClickOutside: false,
+      content: 'input',
+      buttons: {
+        cancel: 'Cancelar',
+        confirm: 'Siguiente',
+      },
+    }).then((value) => {
+      swal('Digite la cantidad a pagar en USD', {
+        closeOnClickOutside: false,
+        content: 'input',
+        buttons: {
+          cancel: 'Cancelar',
+          confirm: 'Confirmar',
+        },
+      });
+    });
+  });
+
   const ctx = document.getElementById('myChart').getContext('2d');
   const myChart = new Chart(ctx, {
     type: 'bar',
