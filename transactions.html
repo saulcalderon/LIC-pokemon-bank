@@ -28,7 +28,7 @@
   <div id="index-banner" class="parallax-container">
     <div class="section no-pad-bot">
       <a class="btn-back" href="menu.html"><i class="material-icons medium">arrow_back</i></a>
-        <h1 class="center">Historial de transacciones</h1>
+      <h1 class="center">Historial de transacciones</h1>
       <div class="container">
         <br><br>
         <div class="row">
@@ -41,6 +41,31 @@
         </div>
         <br><br>
         <div class="row">
+          <div class="col m6">
+            <canvas id="myChart" width="400" height="400"></canvas>
+            <canvas id="myChart2" width="400" height="400"></canvas>
+          </div>
+          <div class="col m6">
+            <div class="flex-container">
+              <a class="waves-effect waves-light btn">Todos</a>
+              <a class="waves-effect waves-light btn">Ingresos</a>
+              <a class="waves-effect waves-light btn">Egresos</a>
+            </div>
+            <ul class="collection">
+              <li class="collection-item avatar">
+                <i class="material-icons circle red">remove</i>
+                <span class="title black-text">Pago colegiatura | 10/01/2022 | -$115</span>
+              </li>
+              <li class="collection-item avatar">
+                <i class="material-icons circle green">add</i>
+                <span class="title black-text">Depósito | 10/01/2022 | $500</span>
+              </li>
+              <li class="collection-item avatar">
+                <i class="material-icons circle red">remove</i>
+                <span class="title black-text">Pago de servicio: Luz | 10/01/2022 | -$40</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -59,6 +84,7 @@
   <!--  Scripts-->
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="js/materialize.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
   <script src="js/init.js"></script>
 
 </body>
