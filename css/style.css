@@ -8,13 +8,6 @@ main {
   flex: 1 0 auto;
 }
 
-.flex-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
 .btn-back {
   position: absolute;
   top: 60px;
