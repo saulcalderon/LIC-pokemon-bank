@@ -19,6 +19,7 @@ main {
   position: absolute;
   top: 60px;
   left: 30px;
+  color: #444445;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,800;1,800&display=swap');
