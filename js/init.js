@@ -3,7 +3,9 @@
     $('.sidenav').sidenav();
     $('.parallax').parallax();
 
+    // Custom logic for index page
     if (window.location.pathname === '/index.html') {
+      // Definicion del usuario en el localStorage
       const user = {
         name: 'Ash Ketchum',
         pin: '1234',
@@ -15,6 +17,7 @@
       localStorage.setItem('user', JSON.stringify(user));
     }
 
+    // Impresion de los datos del usuario en el DOM
     if (localStorage.getItem('user')) {
       const user = JSON.parse(localStorage.getItem('user'));
       $('.bienvenida').text(`Bienvenido/a ${user.name}`);
@@ -22,14 +25,17 @@
       $('.balance-general').text(`Balance general: $${user.balance}`);
     }
 
+    // Custom logic for transactions page
     if (window.location.pathname === '/transactions.html') {
       const user = JSON.parse(localStorage.getItem('user'));
       const transactions = user.transactions;
 
+      // Bar chart for different types of services
       let sumaDineroServiciosDeAgua = 0;
       let sumaDineroServiciosDeLuz = 0;
       let sumaDineroServiciosDeInternet = 0;
 
+      // Collecting data for the bar chart
       transactions.forEach((transaction) => {
         if (transaction.type === 'service') {
           if (transaction.category === 'agua') {
@@ -46,6 +52,7 @@
         }
       });
 
+      // Creating the bar chart
       const ctx = document.getElementById('myChart').getContext('2d');
       new Chart(ctx, {
         type: 'bar',
@@ -86,10 +93,13 @@
         },
       });
 
+
+      // Pie chart for different transaction types
       let sumaDineroDepositos = 0;
       let sumaDineroRetiros = 0;
       let sumaDineroServicios = 0;
 
+      // Collecting data for the pie chart
       transactions.forEach((transaction) => {
         if (transaction.type === 'deposit') {
           sumaDineroDepositos += transaction.amount;
@@ -104,6 +114,7 @@
         }
       });
 
+      // Creating the pie chart
       const ctx2 = document.getElementById('myChart2').getContext('2d');
       new Chart(ctx2, {
         type: 'pie',
@@ -138,6 +149,7 @@
 
   // Logic for the login page
   $('#btn-login').click(function () {
+    // Logica para validacion del PIN
     const user = JSON.parse(localStorage.getItem('user'));
 
     const userValue = $('#user-input').val();
@@ -162,7 +174,7 @@
     swal('Usuario o PIN incorrecto', 'Por favor inténtelo de nuevo.', 'error');
   });
 
-  // Logic for add money buttons
+  // Button configuration for deposit and withdraw pages
   $('#btn-add-25').click(function () {
     if (window.location.pathname === '/deposit.html') {
       $('#deposit-money-input').val(25);
@@ -173,6 +185,7 @@
     }
   });
 
+  // Button configuration for deposit and withdraw pages
   $('#btn-add-50').click(function () {
     if (window.location.pathname === '/deposit.html') {
       $('#deposit-money-input').val(50);
@@ -183,6 +196,7 @@
     }
   });
 
+  // Button configuration for deposit and withdraw pages
   $('#btn-add-100').click(function () {
     if (window.location.pathname === '/deposit.html') {
       $('#deposit-money-input').val(100);
@@ -193,6 +207,7 @@
     }
   });
 
+  // Button configuration for deposit and withdraw pages
   $('#btn-add-200').click(function () {
     if (window.location.pathname === '/deposit.html') {
       $('#deposit-money-input').val(200);
@@ -203,6 +218,7 @@
     }
   });
 
+  // Function to validate money input
   function validateMoneyInput(evt) {
     evt = evt || window.event;
     const charCode = evt.which || evt.keyCode;
@@ -241,7 +257,9 @@
 
     depositMoneyInput = parseFloat(depositMoneyInput).toFixed(2);
 
+    // Getting the user from local storage
     const user = JSON.parse(localStorage.getItem('user'));
+    // Updating the user balance and saving it
     const newBalance = parseFloat(user.balance) + parseFloat(depositMoneyInput);
     user.balance = newBalance;
     user.transactions.push({
@@ -274,7 +292,9 @@
 
     withdrawMoneyInput = parseFloat(withdrawMoneyInput).toFixed(2);
 
+    // Getting the user from local storage
     const user = JSON.parse(localStorage.getItem('user'));
+    // Updating the user balance and saving it
     const newBalance =
       parseFloat(user.balance) - parseFloat(withdrawMoneyInput);
     if (newBalance < 0) {
@@ -303,6 +323,7 @@
     });
   });
 
+  // Logic for services buttons
   $('.btn-services').click(function (event) {
     swal('Digite el número único de la factura a pagar:', {
       closeOnClickOutside: false,
@@ -318,6 +339,7 @@
         confirm: 'Siguiente',
       },
     }).then((noBill) => {
+      // Validaciones para el numero de factura
       if (
         isNaN(noBill) ||
         noBill.includes('e') ||
@@ -334,6 +356,7 @@
         return;
       }
 
+      // Modal para ingresar el monto a pagar de la factura
       swal('Digite la cantidad a pagar en USD', {
         closeOnClickOutside: false,
         content: {
@@ -348,6 +371,7 @@
           confirm: 'Confirmar',
         },
       }).then((value) => {
+        // Validaciones para el monto a pagar
         if (
           isNaN(value) ||
           value.includes('e') ||
@@ -365,7 +389,9 @@
 
         value = parseFloat(value).toFixed(2);
 
+        // Getting the user from local storage
         const user = JSON.parse(localStorage.getItem('user'));
+        // Updating the user balance
         const newBalance = parseFloat(user.balance) - parseFloat(value);
         if (newBalance < 0) {
           swal(
@@ -376,6 +402,7 @@
           return;
         }
 
+        // Saving the transaction
         user.balance = newBalance;
         user.transactions.push({
           type: 'service',
@@ -396,6 +423,4 @@
       });
     });
   });
-
-  //TODO: Add path validation to prevent null error in console
 })(jQuery); // end of jQuery name space
