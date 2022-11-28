@@ -93,7 +93,6 @@
         },
       });
 
-
       // Pie chart for different transaction types
       let sumaDineroDepositos = 0;
       let sumaDineroRetiros = 0;
@@ -138,8 +137,75 @@
           ],
         },
       });
+
+      // Creating the table with the transactions
+      orderAndPrintTransactions(transactions);
     }
   }); // end of document ready
+
+  // Funcion para imprimir transacciones de deposito
+  function orderAndPrintTransactions(transactions) {
+    const reverseTransactions = transactions.reverse();
+
+    reverseTransactions.forEach((transaction) => {
+      if (transaction.type === 'deposit') {
+        printDepositTransaction(transaction.date, transaction.amount);
+      }
+
+      if (transaction.type === 'withdraw') {
+        printWithdrawTransaction(transaction.date, transaction.amount);
+      }
+
+      if (transaction.type === 'service') {
+        printServiceTransaction(
+          transaction.category,
+          transaction.date,
+          transaction.amount
+        );
+      }
+    });
+  }
+  // Function to get date in a readable format
+  function getDateHoursAndMinutes(dateString) {
+    const date = new Date(dateString);
+    let pm = date.getHours() >= 12;
+    let hour12 = date.getHours() % 12;
+    if (!hour12) hour12 += 12;
+    let minute = date.getMinutes();
+
+    return (
+      date.toISOString().split('T')[0] +
+      ' - ' +
+      `${hour12}:${minute} ${pm ? 'pm' : 'am'}`
+    );
+  }
+  // Funcion para imprimir transacciones de deposito
+  function printDepositTransaction(date, amount) {
+    $('#transactions').append(`<li class="collection-item avatar">
+           <i class="material-icons circle green">add</i>
+           <span class="title black-text">Depósito | ${getDateHoursAndMinutes(
+             date
+           )} | $${amount}</span>
+         </li>`);
+  }
+  // Funcion para imprimir transacciones de retiro
+  function printWithdrawTransaction(date, amount) {
+    $('#transactions').append(`<li class="collection-item avatar">
+           <i class="material-icons circle red">remove</i>
+           <span class="title black-text">Retiro | ${getDateHoursAndMinutes(
+             date
+           )} | $${amount}</span>
+         </li>`);
+  }
+  // Funcion para imprimir transacciones de servicio
+  function printServiceTransaction(category, date, amount) {
+    $('#transactions').append(`<li class="collection-item avatar">
+           <i class="material-icons circle red">remove</i>
+           <span class="title black-text">Pago de servicio de ${category} | ${getDateHoursAndMinutes(
+      date
+    )} | $${amount}</span>
+         </li>`);
+  }
 
   // information about the user
   const user = JSON.parse(localStorage.getItem('user'));
@@ -229,19 +295,6 @@
   }
 
   $('.money-input').keypress(validateMoneyInput);
-
-  // TODO: prevent user from entering more than 2 digits
-  // $('.money-input').keydown(function (evt) {
-  //   if (window.location.pathname === '/deposit.html') {
-  //     const depositMoneyInput = $('#deposit-money-input').val()
-  //     console.log(depositMoneyInput);
-
-  //   }
-
-  //   if (window.location.pathname === '/withdraw.html') {
-  //     $('#withdraw-money-input').val(100);
-  //   }
-  // });
 
   // Logic for the deposit button in deposit.html
   $('#btn-deposit').click(function () {
@@ -422,5 +475,48 @@
         });
       });
     });
+  });
+
+  // Logic for adding all transactions to the table in transactions.html
+  $('#transaction-all').click(function () {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const transactions = user.transactions;
+
+    // Clearing the table
+    $('#transactions').empty();
+
+    // Adding the transactions to the table
+    orderAndPrintTransactions(transactions);
+  });
+
+  // Logic for adding only income transactions to the table in transactions.html
+  $('#transaction-income').click(function () {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const transactions = user.transactions;
+
+    // Clearing the table
+    $('#transactions').empty();
+
+    // Adding the transactions to the table
+    const incomeTransactions = transactions.filter(
+      (transaction) => transaction.type === 'deposit'
+    );
+    orderAndPrintTransactions(incomeTransactions);
+  });
+
+  // Logic for adding only expenses transactions to the table in transactions.html
+  $('#transaction-expense').click(function () {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const transactions = user.transactions;
+
+    // Clearing the table
+    $('#transactions').empty();
+
+    // Adding the transactions to the table
+    const expenseTransactions = transactions.filter(
+      (transaction) =>
+        transaction.type === 'withdraw' || transaction.type === 'service'
+    );
+    orderAndPrintTransactions(expenseTransactions);
   });
 })(jQuery); // end of jQuery name space
