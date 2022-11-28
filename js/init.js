@@ -96,14 +96,16 @@
     }
   });
 
-  $('.money-input').keypress(function (evt) {
+  function validateMoneyInput(evt) {
     evt = evt || window.event;
     const charCode = evt.which || evt.keyCode;
     const charStr = String.fromCharCode(charCode);
     if (charStr === '-') return false;
     if (charStr === 'e') return false;
     if (charStr === 'E') return false;
-  });
+  }
+
+  $('.money-input').keypress(validateMoneyInput);
 
   // TODO: prevent user from entering more than 2 digits
   // $('.money-input').keydown(function (evt) {
@@ -166,7 +168,8 @@
     withdrawMoneyInput = parseFloat(withdrawMoneyInput).toFixed(2);
 
     const user = JSON.parse(localStorage.getItem('user'));
-    const newBalance = parseFloat(user.balance) - parseFloat(withdrawMoneyInput);
+    const newBalance =
+      parseFloat(user.balance) - parseFloat(withdrawMoneyInput);
     if (newBalance < 0) {
       swal(
         'Saldo insuficiente',
@@ -193,22 +196,96 @@
     });
   });
 
-  $('#btn-service-one').click(function () {
+  $('.btn-services').click(function (event) {
     swal('Digite el número único de la factura a pagar:', {
       closeOnClickOutside: false,
-      content: 'input',
+      content: {
+        element: 'input',
+        attributes: {
+          placeholder: 'Número de factura',
+          type: 'number',
+        },
+      },
       buttons: {
         cancel: 'Cancelar',
         confirm: 'Siguiente',
       },
-    }).then(() => {
+    }).then((noBill) => {
+      if (
+        isNaN(noBill) ||
+        noBill.includes('e') ||
+        noBill.includes('E') ||
+        noBill.includes('-') ||
+        noBill.includes('.') ||
+        noBill === '0'
+      ) {
+        swal(
+          'Valor inválido',
+          'El número de factura debe ser un número, por favor inténtelo de nuevo.',
+          'error'
+        );
+        return;
+      }
+
       swal('Digite la cantidad a pagar en USD', {
         closeOnClickOutside: false,
-        content: 'input',
+        content: {
+          element: 'input',
+          attributes: {
+            placeholder: 'Monto a pagar',
+            type: 'number',
+          },
+        },
         buttons: {
           cancel: 'Cancelar',
           confirm: 'Confirmar',
         },
+      }).then((value) => {
+        if (
+          isNaN(value) ||
+          value.includes('e') ||
+          value.includes('E') ||
+          value.includes('-') ||
+          value < 0.01
+        ) {
+          swal(
+            'Valor inválido',
+            'El valor del monto de la factura es inválido, por favor inténtelo de nuevo.',
+            'error'
+          );
+          return;
+        }
+
+        value = parseFloat(value).toFixed(2);
+
+        const user = JSON.parse(localStorage.getItem('user'));
+        const newBalance = parseFloat(user.balance) - parseFloat(value);
+        if (newBalance < 0) {
+          swal(
+            'Saldo insuficiente',
+            'No tiene suficiente saldo para realizar esta operación.',
+            'error'
+          );
+          return;
+        }
+
+        user.balance = newBalance;
+        user.transactions.push({
+          type: 'service',
+          service: event.target.id,
+          noBill,
+          amount: parseFloat(value),
+          date: new Date(),
+        });
+        localStorage.setItem('user', JSON.stringify(user));
+
+        swal(
+          'Pago exitoso',
+          `El pago por la cantidad de $${value} fue exitoso.`,
+          'success'
+        ).then(() => {
+          window.location.href = 'menu.html';
+        });
       });
     });
   });
